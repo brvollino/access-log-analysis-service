@@ -5,6 +5,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import static io.restassured.RestAssured.get;
 
 /**
@@ -29,5 +33,11 @@ public class JettyServerTest {
     public void shouldBootServer() {
         get(server.getUri())
             .then().statusCode(404);
+    }
+
+    @Test
+    public void shouldGetAHealthCheck() throws URISyntaxException {
+        get(server.getUri().toString() + "health")
+                .then().statusCode(200);
     }
 }
