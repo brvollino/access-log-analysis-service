@@ -1,2 +1,3 @@
 # access-log-analysis-service
-A service that ingests log entries and produces metrics
+
+A service that ingests URL access log entries and produces access metrics.

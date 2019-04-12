@@ -1,0 +1,35 @@
+plugins {
+    id 'idea'
+    id 'application'
+}
+
+description = "Access Log Analyser service"
+group = 'com.vollino.log.analyser'
+version = '0.1.0-SNAPSHOT'
+
+application {
+    mainClassName = 'com.vollino.log.analyser.Application'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+apply from: './java.gradle'
+
+dependencies {
+    implementation 'com.google.guava:guava:27.1-jre'
+    implementation 'org.eclipse.jetty:jetty-server:9.4.15.v20190215'
+    implementation 'org.eclipse.jetty:jetty-servlet:9.4.15.v20190215'
+
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.hamcrest:java-hamcrest:2.0.0.0'
+    testImplementation 'org.mockito:mockito-core:2.27.0'
+    testImplementation 'eu.codearte.catch-exception:catch-exception:2.0'
+    testImplementation 'io.rest-assured:rest-assured:3.3.0'
+}
