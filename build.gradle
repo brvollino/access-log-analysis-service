@@ -3,7 +3,7 @@ plugins {
     id 'application'
 }
 
-description = "Access Log Analyser service"
+description = "Access Log Analysis service"
 group = 'com.vollino.log.analyser'
 version = '0.1.0-SNAPSHOT'
 
