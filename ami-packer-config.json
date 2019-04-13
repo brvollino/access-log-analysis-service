@@ -15,5 +15,20 @@
       "ssh_username": "ubuntu",
       "ami_name": "access-log-analysis-service-{{timestamp}}"
     }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "build/distributions/access-log-analysis-service-{{user `project_version`}}.tar",
+      "destination": "/home/ubuntu/"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "tar xvf /home/ubuntu/access-log-analysis-service-{{user `project_version`}}.tar -C /home/ubuntu/",
+        "rm /home/ubuntu/*.tar",
+        "crontab -l | { cat; echo \"@reboot /home/ubuntu/access-log-analysis-service-{{user `project_version`}}/bin/access-log-analysis-service 8090\"; } | crontab -"
+      ]
+    }
   ]
 }

@@ -7,7 +7,6 @@ pipeline {
         stage('Build') {
             steps {
                 sh './gradlew build'
-                checkout scm
             }
         }
         stage('Bake AMI') {
@@ -18,7 +17,10 @@ pipeline {
                 AWS_ACCESS_KEY = credentials('aws-access-credential')
                 PROJECT_VERSION = sh(
                     script: './gradlew properties | grep -Po "(?<=^version: ).*"',
-                    returnStdout: true)
+                    returnStdout: true).trim()
+                CURRENT_DIR = sh(
+                        script: 'ls -lah ./build/distributions',
+                        returnStdout: true).trim()
             }
             steps {
                 sh 'printenv'
