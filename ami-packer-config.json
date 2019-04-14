@@ -12,7 +12,7 @@
       "region": "sa-east-1",
       "source_ami_filter": {
         "filters": {
-          "name": "ubuntu-with-java"
+          "name": "ubuntu-with-java-*"
         },
         "owners": ["self"],
         "most_recent": true
