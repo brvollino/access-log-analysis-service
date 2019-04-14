@@ -1,11 +1,15 @@
 package com.vollino.log.analyser.server;
 
 import com.google.common.base.Preconditions;
-import com.vollino.log.analyser.servlets.HealthCheckServlet;
+import com.vollino.log.analyser.health.HealthCheckServlet;
+import com.vollino.log.analyser.ingest.LogIngestionService;
+import com.vollino.log.analyser.ingest.LogIngestionServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * @author Bruno Vollino
@@ -13,18 +17,18 @@ import java.net.URI;
 public class JettyServer {
 
     private Server server;
-    private Integer port;
 
-    public JettyServer(Integer port) {
-        this.port = port;
+    public JettyServer(Integer port, List<HttpEndpoint> endpoints) {
         server = new Server(port);
-        configureEndpoints();
-    }
 
-    private void configureEndpoints() {
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
-        handler.addServletWithMapping(HealthCheckServlet.class, "/health");
+
+        for (HttpEndpoint endpoint: endpoints) {
+            handler.addServletWithMapping(new ServletHolder(endpoint.getHttpServlet()), endpoint.getPath());
+
+        }
+
     }
 
     public void start() throws Exception {
@@ -40,7 +44,6 @@ public class JettyServer {
     public void stop() throws Exception {
         Preconditions.checkArgument(server.isStarted(), "The server is not running");
         server.stop();
-        this.port = null;
     }
 
     public URI getUri() {

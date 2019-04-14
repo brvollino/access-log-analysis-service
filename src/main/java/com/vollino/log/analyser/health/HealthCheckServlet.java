@@ -1,4 +1,4 @@
-package com.vollino.log.analyser.servlets;
+package com.vollino.log.analyser.health;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

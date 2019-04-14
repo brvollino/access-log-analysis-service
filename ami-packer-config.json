@@ -12,14 +12,16 @@
       "region": "sa-east-1",
       "source_ami_filter": {
         "filters": {
-          "name": "ubuntu-with-java-*"
+          "name": "ubuntu-with-java*"
         },
         "owners": ["self"],
         "most_recent": true
       },
       "instance_type": "t2.micro",
       "ssh_username": "ubuntu",
-      "ami_name": "access-log-analysis-service-{{timestamp}}"
+      "ami_name": "access-log-analysis-service",
+      "force_deregister": true,
+      "force_delete_snapshot": true
     }
   ],
   "provisioners": [
@@ -39,7 +41,7 @@
       "inline": [
         "tar xvf /home/ubuntu/access-log-analysis-service-{{user `project_version`}}.tar -C /home/ubuntu/",
         "rm /home/ubuntu/*.tar",
-        "crontab -l | { cat; echo \"@reboot /home/ubuntu/access-log-analysis-service-{{user `project_version`}}/bin/access-log-analysis-service 8090\"; } | crontab -"
+        "sudo ln -s /home/ubuntu/access-log-analysis-service-{{user `project_version`}}/bin/access-log-analysis-service /usr/local/bin/"
       ]
     }
   ]
