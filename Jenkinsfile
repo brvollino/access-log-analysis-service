@@ -23,7 +23,7 @@ pipeline {
                         returnStdout: true).trim()
             }
             steps {
-                sh 'printenv'
+                sh 'packer build ubuntu-with-java-packer-config.json'
                 sh 'packer build ami-packer-config.json'
             }
         }
