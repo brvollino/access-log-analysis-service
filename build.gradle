@@ -25,10 +25,12 @@ dependencies {
     implementation 'com.google.guava:guava:27.1-jre'
     implementation 'org.eclipse.jetty:jetty-server:9.4.15.v20190215'
     implementation 'org.eclipse.jetty:jetty-servlet:9.4.15.v20190215'
+    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:6.3.2'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.hamcrest:java-hamcrest:2.0.0.0'
     testImplementation 'org.mockito:mockito-core:2.27.0'
     testImplementation 'eu.codearte.catch-exception:catch-exception:2.0'
     testImplementation 'io.rest-assured:rest-assured:3.3.0'
+    testImplementation 'pl.allegro.tech:embedded-elasticsearch:2.7.0'
 }

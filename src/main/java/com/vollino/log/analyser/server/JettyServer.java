@@ -42,8 +42,9 @@ public class JettyServer {
     }
 
     public void stop() throws Exception {
-        Preconditions.checkArgument(server.isStarted(), "The server is not running");
-        server.stop();
+        if (server.isRunning()) {
+            server.stop();
+        }
     }
 
     public URI getUri() {
