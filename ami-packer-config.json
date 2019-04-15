@@ -26,12 +26,6 @@
   ],
   "provisioners": [
     {
-      "type": "shell",
-      "inline": [
-        "sudo apt-get update; sudo apt-get install -y openjdk-11-jre"
-      ]
-    },
-    {
       "type": "file",
       "source": "build/distributions/access-log-analysis-service-{{user `project_version`}}.tar",
       "destination": "/home/ubuntu/"
