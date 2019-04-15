@@ -1,5 +1,6 @@
 package com.vollino.log.analyser;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.vollino.log.analyser.health.HealthCheckServlet;
 import com.vollino.log.analyser.ingest.LogIngestionService;
@@ -23,6 +24,7 @@ public class LogAnalyserServerConfiguration {
     private final String elasticsearchEndpoint;
 
     private RestHighLevelClient elasticSearchRestHighLeveClient;
+    private ObjectMapper objectMapper;
 
     public LogAnalyserServerConfiguration(int port, String elasticsearchEndpoint) {
         this.port = port;
@@ -40,7 +42,7 @@ public class LogAnalyserServerConfiguration {
     }
 
     private LogMetricsServlet logMetricsServlet() {
-        return new LogMetricsServlet(logMetricService());
+        return new LogMetricsServlet(logMetricService(), objectMapper());
     }
 
     private LogMetricsService logMetricService() {
@@ -65,5 +67,12 @@ public class LogAnalyserServerConfiguration {
 
     private HealthCheckServlet healthCheckServlet() {
         return new HealthCheckServlet();
+    }
+
+    private ObjectMapper objectMapper() {
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
+        return objectMapper;
     }
 }

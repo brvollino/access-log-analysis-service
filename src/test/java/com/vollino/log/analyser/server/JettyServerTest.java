@@ -1,9 +1,16 @@
 package com.vollino.log.analyser.server;
 
+import com.google.common.collect.Lists;
 import com.vollino.log.analyser.LogAnalyserServerConfiguration;
+import com.vollino.log.analyser.metrics.Metrics;
+import com.vollino.log.analyser.metrics.ValueHitsPair;
+import io.restassured.mapper.ObjectMapperType;
+import io.restassured.response.Response;
 import org.apache.http.HttpHost;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.rest.RestStatus;
@@ -22,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Bruno Vollino
@@ -80,18 +89,18 @@ public class JettyServerTest {
     public void shouldBootServer() {
         when()
             .get(server.getUri())
-        .then().statusCode(404);
+        .then().assertThat().statusCode(404);
     }
 
     @Test
     public void shouldGetAHealthCheck() throws URISyntaxException {
         when()
             .get(server.getUri().toString() + "health")
-        .then().statusCode(200);
+        .then().assertThat().statusCode(200);
     }
 
     @Test
-    public void shouldIngestLogEntries() throws URISyntaxException {
+    public void shouldIngestLogEntries() throws IOException {
         given()
             .body(
                 "/pets/exotic/cats/10 1037825323957 5b019db5-b3d0-46d2-9963-437860af707f 1\n" +
@@ -101,7 +110,11 @@ public class JettyServerTest {
         .when()
             .post(server.getUri().toString() + "ingest")
         .then()
-            .statusCode(200);
+            .assertThat().statusCode(200);
+
+        SearchResponse response = elasticSearchClient.search(new SearchRequest("logs"));
+
+        assertThat(response.getHits().getTotalHits(), equalTo(3L));
     }
 
     @Test
@@ -110,19 +123,28 @@ public class JettyServerTest {
             .body(
                 "/pets/exotic/cats/10 1037825323957 5b019db5-b3d0-46d2-9963-437860af707f 1\n" +
                 "/pets/exotic/cats/10 1037825323957 5b019db5-b3d0-46d2-9963-437860af707f 2\n" +
+                "/pets/exotic/cats/10 1037825323957 5b019db5-b3d0-46d2-9963-437860af707f 2\n" +
                 "/pets/guaipeca/dogs/1 1037825323957 5b019db5-b3d0-46d2-9963-437860af707g 1\n" +
                 "/pets/guaipeca/dogs/1 1037825323957 5b019db5-b3d0-46d2-9963-437860af707g 3\n" +
                 "/pets/exotic/capybara/10 1037825323957 5b019db5-b3d0-46d2-9963-437860af707f 1\n" +
                 "/tiggers/bid/now 1037825323957 5b019db5-b3d0-46d2-9963-437860af707e 1\n" +
+                "/tiggers/bid/now 1037825323957 5b019db5-b3d0-46d2-9963-437860af707e 1\n" +
                 "/tiggers/bid/now 1037825323957 5b019db5-b3d0-46d2-9963-437860af707e 2\n" +
-                "/tiggers/bid/now 1037825323957 5b019db5-b3d0-46d2-9963-437860af707e 3\n"
+                "/tiggers/bid/now 1037825323957 5b019db5-b3d0-46d2-9963-437860af707e 3"
             )
             .post(server.getUri().toString() + "ingest");
 
-
-        when()
+        Response response = given()
+            .contentType("application/json")
             .get(server.getUri().toString() + "metrics")
-        .then()
-            .statusCode(200);
+            .thenReturn();
+        Metrics metrics = response.as(Metrics.class, ObjectMapperType.JACKSON_2);
+
+        assertThat(response.statusCode(), equalTo(200));
+        assertThat(metrics.getTopHitUrls(), equalTo(Lists.newArrayList(
+            new ValueHitsPair("/tiggers/bid/now", 4),
+            new ValueHitsPair("/pets/exotic/cats/10", 3),
+            new ValueHitsPair("/pets/guaipeca/dogs/1", 2)
+        )));
     }
 }
