@@ -33,9 +33,9 @@ public class LogAnalyserServerConfiguration {
 
     public JettyServer jettyServer() {
         List<HttpEndpoint> endpoints = Lists.newArrayList(
-                new HttpEndpoint("/health", healthCheckServlet()),
-                new HttpEndpoint("/ingest", logIngestionServlet()),
-                new HttpEndpoint("/metrics", logMetricsServlet())
+                new HttpEndpoint("/laaa/health", healthCheckServlet()),
+                new HttpEndpoint("/laaa/ingest", logIngestionServlet()),
+                new HttpEndpoint("/laaa/metrics", logMetricsServlet())
         );
 
         return new JettyServer(port, endpoints);

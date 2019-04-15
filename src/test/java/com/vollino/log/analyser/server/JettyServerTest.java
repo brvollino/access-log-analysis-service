@@ -95,7 +95,7 @@ public class JettyServerTest {
     @Test
     public void shouldGetAHealthCheck() throws URISyntaxException {
         when()
-            .get(server.getUri().toString() + "health")
+            .get(server.getUri().toString() + "laaa/health")
         .then().assertThat().statusCode(200);
     }
 
@@ -108,7 +108,7 @@ public class JettyServerTest {
                 "/tiggers/bid/now 1037825323957 5b019db5-b3d0-46d2-9963-437860af707e 3\n"
             )
         .when()
-            .post(server.getUri().toString() + "ingest")
+            .post(server.getUri().toString() + "laaa/ingest")
         .then()
             .assertThat().statusCode(200);
 
@@ -132,11 +132,11 @@ public class JettyServerTest {
                 "/tiggers/bid/now 1037825323957 5b019db5-b3d0-46d2-9963-437860af707e 2\n" +
                 "/tiggers/bid/now 1037825323957 5b019db5-b3d0-46d2-9963-437860af707e 3"
             )
-            .post(server.getUri().toString() + "ingest");
+            .post(server.getUri().toString() + "laaa/ingest");
 
         Response response = given()
             .contentType("application/json")
-            .get(server.getUri().toString() + "metrics")
+            .get(server.getUri().toString() + "laaa/metrics")
             .thenReturn();
         Metrics metrics = response.as(Metrics.class, ObjectMapperType.JACKSON_2);
 
